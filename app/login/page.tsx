@@ -33,7 +33,7 @@ export default function Login() {
     setError("");
     setFieldErrors({});
 
-    let errors: typeof fieldErrors = {};
+    const errors: typeof fieldErrors = {};
     if (!formData.username.trim())
       errors.username = "Please enter your username";
     if (!formData.password.trim())
@@ -60,8 +60,12 @@ export default function Login() {
       } else {
         router.push("/");
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Username atau password salah");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Username atau password salah");
+      } else {
+        setError("Username atau password salah");
+      }
     }
   };
 

@@ -22,8 +22,9 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let newErrors = { username: "", password: "" };
+    const newErrors = { username: "", password: "" };
     let valid = true;
+
 
     if (!username.trim()) {
       newErrors.username = "Username field cannot be empty";
@@ -60,9 +61,14 @@ export default function RegisterPage() {
           alert("Registration successful! Please login.");
           router.push("/login");
         }
-      } catch (err: any) {
-        setApiError(err.response?.data?.message || "Registration failed");
-      } finally {
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          setApiError(err.response?.data?.message || "Registration failed");
+        } else {
+          setApiError("Registration failed");
+        }
+      }
+       finally {
         setLoading(false);
       }
     }

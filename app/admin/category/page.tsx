@@ -8,7 +8,7 @@ import { Category } from "@/types";
 import { Search as SearchIcon } from "lucide-react";
 
 export default function ArticlesPage() {
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -23,6 +23,12 @@ export default function ArticlesPage() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []);
+  
   useEffect(() => {
     fetch("https://test-fe.mysellerpintar.com/api/categories")
       .then((res) => res.json())

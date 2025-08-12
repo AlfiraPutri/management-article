@@ -1,7 +1,6 @@
 import Header from "@/components/user/header";
 import { notFound } from "next/navigation";
 import { Article } from "@/types";
-import { Category } from "@/types";
 import Link from "next/link";
 import Footer from "@/components/user/footer";
 
@@ -34,9 +33,8 @@ async function getOtherArticles(
     );
     if (!res.ok) return [];
 
-    const result = await res.json(); 
+    const result = await res.json();
     const allArticles: Article[] = result.data || [];
-
     return allArticles.filter((a) => a.id !== excludeId).slice(0, 3);
   } catch (error) {
     console.error(error);
@@ -44,12 +42,16 @@ async function getOtherArticles(
   }
 }
 
+interface ArticleDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
 export default async function ArticleDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
-  const article = await getArticle(params.id);
+}: ArticleDetailPageProps) {
+  const { id } = await params;
+  const article = await getArticle(id);
+
   if (!article) {
     notFound();
   }

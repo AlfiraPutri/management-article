@@ -3,12 +3,14 @@
 import { useEffect, useState, useMemo } from "react";
 import { Article, Category } from "@/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/admin/Sidebar";
 import Pagination from "@/components/admin/Pagination";
 import Profile from "@/components/admin/profile";
 import { Search as SearchIcon } from "lucide-react";
 
 export default function ArticlesPage() {
+  const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,12 +22,13 @@ export default function ArticlesPage() {
   const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
-    fetch("https://test-fe.mysellerpintar.com/api/articles")
-      .then((res) => res.json())
-      .then((data) => setArticles(data.data || []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.replace("/login");
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
 
   useEffect(() => {
     fetch("https://test-fe.mysellerpintar.com/api/categories")
@@ -84,7 +87,9 @@ export default function ArticlesPage() {
     }
   };
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) {
+    return <p className="text-center mt-10">Checking login...</p>;
+  }
 
   return (
     <div className="flex min-h-screen ">

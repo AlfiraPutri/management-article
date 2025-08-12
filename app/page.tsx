@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Article, Category } from "@/types";
 import Header from "@/components/user/header";
 import Hero from "@/components/user/hero";
@@ -10,6 +11,7 @@ import Pagination from "@/components/user/pagination";
 import Footer from "@/components/user/footer";
 
 export default function Home() {
+  const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState("");
@@ -17,6 +19,16 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalArticles, setTotalArticles] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
 
   const fetchArticles = async (
     searchText = "",
@@ -75,6 +87,10 @@ export default function Home() {
     setCategory(e.target.value);
     fetchArticles(search, e.target.value, 1);
   };
+
+  if (loading) {
+    return <p className="text-center mt-10">Checking login...</p>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
